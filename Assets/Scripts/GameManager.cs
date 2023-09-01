@@ -47,8 +47,13 @@ public class GameManager : MonoBehaviour
         {
             cameraAudio.Stop();
             GameOverScreen.SetActive(true);
+            if(score > PersistentData.Instance.HighScore)
+            {
+                PersistentData.Instance.HighScore = score;
+            }
+            PersistentData.Instance.SaveScore();
             FinalScore.text = $"Final Score: {score}";
-            HighScore.text = $"Final Score: {score}";
+            HighScore.text = $"Final Score: {PersistentData.Instance.HighScore}";
         }     
     }
 

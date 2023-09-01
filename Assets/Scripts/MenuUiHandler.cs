@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,10 +9,13 @@ public class MenuUiHandler : MonoBehaviour
 {
     [SerializeField] GameObject helpScreen;
     [SerializeField] GameObject MainScreen;
+    [SerializeField] TextMeshProUGUI ScoreText;
     // Start is called before the first frame update
     void Start()
     {
-        
+        PersistentData.Instance.LoadScore();
+        int score = PersistentData.Instance.HighScore;
+        ScoreText.text = $"High Score: {score}";
     }
 
     // Update is called once per frame
