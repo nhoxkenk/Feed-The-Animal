@@ -19,7 +19,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Start()
     {
-        currentHealth = health;
+        currentHealth = health * GameManager.Instance.hitCount;
     }
 
     void Update()
@@ -58,7 +58,24 @@ public class EnemyBehaviour : MonoBehaviour
                     break;
                 case ProjectileType.Dynamite:
                     //Debug.Log("Explosion");
-                    isDestroyed = true;
+                    Debug.Log(GameManager.Instance.multiHit);
+                    if (GameManager.Instance.multiHit)
+                    {
+                        isDestroyed = true;
+                        
+                    }
+                    else
+                    {
+                        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+                        foreach (GameObject enemy in enemies)
+                        {
+                            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+                            if (distance < GameManager.Instance.explosionRange)
+                            {
+                                enemy.GetComponent<EnemyBehaviour>().isDestroyed = true;
+                            }
+                        }
+                    }
                     break;
             }
             
@@ -68,6 +85,12 @@ public class EnemyBehaviour : MonoBehaviour
     public int returnHealth()
     {
         return health;
+    }
+
+    public void setHealth(int health)
+    {
+        this.health /= health;
+        //Debug.Log(this.health);
     }
 
     IEnumerator RemoveWhiteMaterialAfterDelay()

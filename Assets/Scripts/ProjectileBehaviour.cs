@@ -57,27 +57,32 @@ public class ProjectileBehaviour : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(projectileType == ProjectileType.Peashooter && other != null)
+        if (!other.gameObject.CompareTag("Player"))
         {
-            if (target != null)
+            if (projectileType == ProjectileType.Peashooter)
             {
-                if (other.gameObject.CompareTag(this.target.tag))
+                if (target != null)
                 {
-                    Destroy(gameObject);
-                    //Destroy(other.gameObject);
-                    other.GetComponent<EnemyBehaviour>().OnHit();
+                    if (other.gameObject.CompareTag(this.target.tag))
+                    {
+                        Destroy(gameObject);
+                        //Destroy(other.gameObject);
+                        other.GetComponent<EnemyBehaviour>().OnHit();
+                    }
                 }
             }
-        }else if (projectileType == ProjectileType.Dynamite)
-        {
-            if (other.gameObject.CompareTag("Enemy"))
+            else if (projectileType == ProjectileType.Dynamite)
             {
-                playerManager.setBoomAudioSource();
-                Destroy(gameObject);
-                //Destroy(other.gameObject);
-                Instantiate(dynamiteParticle, transform.position + Vector3.up * 2f, transform.rotation);               
+                if (other.gameObject.CompareTag("Enemy"))
+                {
+                    playerManager.setBoomAudioSource();
+                    Destroy(gameObject);
+                    //Destroy(other.gameObject);
+                    Instantiate(dynamiteParticle, transform.position + Vector3.up * 2f, transform.rotation);
+                }
             }
         }
+        
         
     }
 

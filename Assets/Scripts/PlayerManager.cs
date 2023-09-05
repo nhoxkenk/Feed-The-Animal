@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -18,6 +18,9 @@ public class PlayerManager : MonoBehaviour
 
     private float horizontalInput;
     private float verticalInput;
+    private float timerDelay = 1.5f;
+    private Dictionary<ProjectileType, float> timers = new Dictionary<ProjectileType, float>();
+
 
     public int maxHealth = 5;
     public int currentHealth;
@@ -27,6 +30,8 @@ public class PlayerManager : MonoBehaviour
     public AudioClip hurtSound;
     public AudioClip shooterSound;
     public AudioClip boomSound;
+
+    public bool enableDynamite = false;
 
     public void setCurrentHealth(int currentHealth)
     {
@@ -57,6 +62,10 @@ public class PlayerManager : MonoBehaviour
             verticalInput = inputManager.verticalInput;
 
             this.target = calculateNearestAnimal();
+            FireBullet(ProjectileType.Peashooter);
+            //FireBullet(ProjectileType.Dynamite);
+            if(enableDynamite == true) 
+            { FireBullet(ProjectileType.Dynamite); }
         }
         else
         {
@@ -80,7 +89,9 @@ public class PlayerManager : MonoBehaviour
     {
         currentHealth = maxHealth;
         healthBar.setMaxHealth(currentHealth);
-        StartCoroutine(AutoFireCoroutine(ProjectileType.Peashooter));
+        timers[ProjectileType.Peashooter] = 0f;
+        timers[ProjectileType.Dynamite] = 0f;
+        //StartCoroutine(AutoFireCoroutine(ProjectileType.Peashooter));
         //StartCoroutine(AutoFireCoroutine(ProjectileType.Dynamite));
     }
 
@@ -147,6 +158,76 @@ public class PlayerManager : MonoBehaviour
                     break;
             }
             
+        }
+    }
+
+    void FireBullet(ProjectileType type)
+    {
+        if (timers.ContainsKey(type))
+        {
+            timers[type] += Time.deltaTime;
+
+            switch (type)
+            {
+                case ProjectileType.Peashooter:
+                    if (timers[type] >= timerDelay && this.target != null)
+                    {
+                        FireProjectile(this.target.transform);
+                        timers[type] = 0f; // Đặt lại timer sau khi bắn đạn
+                    }
+                    break;
+
+                case ProjectileType.Dynamite:
+                    if (timers[type] >= timerDelay * 3)
+                    {
+                        setDynamite();
+                        timers[type] = 0; // Đặt lại timer sau khi thiết lập Dynamite
+                    }
+                    break;
+            }
+        }
+        
+    }
+
+    public void ModifyFireRate(float time)
+    {
+        Debug.Log("Fire Rate");
+        timerDelay = time;
+    }
+
+    public void EnableDynamite()
+    {
+        Debug.Log("Dynamite");
+        enableDynamite = true;
+        Debug.Log(enableDynamite);
+    }
+
+    public void ExploseMultiEnemy()
+    {
+        GameManager.Instance.multiHit = false;
+    }
+
+    public void RunFaster()
+    {
+        playerLocomotion.movementSpeed *= 1.2f;
+    }
+
+    public void AddMoreHealth(int i)
+    {
+        currentHealth += i;
+        GameManager.Instance.updateHealthCount();
+        healthBar.setHealth(currentHealth);
+    }
+
+    public void ModifyBaseDame(int dame)
+    {
+        Debug.Log("Base Dame");
+        GameManager.Instance.hitCount -= dame;
+        GameObject[] enemyList = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemy in enemyList)
+        {
+            EnemyBehaviour enemyBehaviour = enemy.GetComponent<EnemyBehaviour>();
+            enemyBehaviour.setHealth(2);
         }
     }
 

@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
+
     public TextMeshProUGUI textMeshProUGUI;
     public TextMeshProUGUI textScore;
     [SerializeField] GameObject GameOverScreen;
@@ -22,7 +24,18 @@ public class GameManager : MonoBehaviour
     int score = 0;
     public bool gameOver = false;
     bool isPause = false;
+    public bool multiHit = false;
+    public int hitCount = 2;
+    public float explosionRange = 10.0f;
 
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +55,12 @@ public class GameManager : MonoBehaviour
             {
                 TogglePauseGame();
             }
+            //if (Input.GetKeyDown(KeyCode.H))
+            //{
+            //    PlayerManager playerManager = GameObject.Find("Player").GetComponent<PlayerManager>();
+            //    playerManager.ModifyBaseDame(1);
+            //    Debug.Log(GameManager.Instance.hitCount);
+            //}
         }
         else
         {
@@ -57,7 +76,7 @@ public class GameManager : MonoBehaviour
         }     
     }
 
-    void updateHealthCount()
+    public void updateHealthCount()
     {
         int playerHealth = playerManager.returnCurrentHealth();
         if(health != playerHealth && health > 0)
