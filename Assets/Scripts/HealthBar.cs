@@ -5,8 +5,7 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-
-    public Slider slider;
+     Slider slider;
     // Start is called before the first frame update
     void Start()
     {

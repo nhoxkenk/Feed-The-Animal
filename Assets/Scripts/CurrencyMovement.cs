@@ -6,6 +6,7 @@ public class CurrencyMovement : MonoBehaviour
 {
     [SerializeField] GameObject player;
     GameManager gameManager;
+    ExpBarController expController;
 
     public float moveSpeed = 25f; 
 
@@ -15,6 +16,7 @@ public class CurrencyMovement : MonoBehaviour
     {
         player = GameObject.Find("Player");
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        expController = GameObject.Find("Exp Bar").GetComponent<ExpBarController>();
     }
 
     // Update is called once per frame
@@ -36,6 +38,7 @@ public class CurrencyMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             gameManager.setScore(1);
+            expController.UpdateProgressBar();
             player.GetComponent<PlayerManager>().setMoneyAudioSource();
             Destroy(gameObject);
         }

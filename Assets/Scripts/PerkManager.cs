@@ -21,6 +21,8 @@ public class PerkManager : MonoBehaviour
 
     Vector3 cardPosition = new Vector3(385f, 200f, 0f);
 
+    ExpBarController expController;
+
     private void Awake()
     {
         if(instance == null)
@@ -33,13 +35,16 @@ public class PerkManager : MonoBehaviour
     {
         unweightedPerks = GetComponents<Perk>();
         cardTemplate.gameObject.SetActive(false);
+        expController = GameObject.Find("Exp Bar").GetComponent<ExpBarController>();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (expController.expSliderValue == expController.expSliderMaxValue)
         {
             GenerateSelectablePerks();
+            expController.IncreaseMaxProgress();
+            Time.timeScale = 0f;
         }
     }
 
@@ -104,6 +109,9 @@ public class PerkManager : MonoBehaviour
     public void OnCompletePerkSelection(Perk p)
     {
         p.maxRepeatsOfPerk -= 1;
+
+        Time.timeScale = 1.0f;
+
         perkCurrent.Add(p);
 
         foreach(PerkCards pp in offeredPerkCards)
