@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TreeEditor;
 using UnityEngine;
 
 public class PerkManager : MonoBehaviour
@@ -19,7 +18,7 @@ public class PerkManager : MonoBehaviour
     [SerializeField]
     GameObject perkMenu;
 
-    Vector3 cardPosition = new Vector3(385f, 200f, 0f);
+    Vector3 cardPosition = new Vector3(-260, 0, 0f);
 
     ExpBarController expController;
 
@@ -41,6 +40,7 @@ public class PerkManager : MonoBehaviour
     private void Update()
     {
         if (expController.expSliderValue == expController.expSliderMaxValue)
+        //if(Input.GetKeyDown(KeyCode.P))
         {
             GenerateSelectablePerks();
             expController.IncreaseMaxProgress();
@@ -92,17 +92,18 @@ public class PerkManager : MonoBehaviour
             //Debug.Log(possiblePerks.Count);
             selectedPerks.Add(possiblePerks[Random.Range(0, possiblePerks.Count)]);
         }
-
-        foreach(Perk p in selectedPerks)
+        cardPosition = new Vector3(-260, 0, 0f);
+        foreach (Perk p in selectedPerks)
         {
             //Debug.Log(p.title.ToString());
             PerkCards pc = PerkCards.Instantiate(cardTemplate, cardTemplate.transform.parent);
             pc.SetUpCard(p);
-            pc.transform.position = cardPosition;
             pc.gameObject.SetActive(true);
+            pc.transform.localPosition = cardPosition;
             offeredPerkCards.Add(pc);
             cardPosition += new Vector3(250, 0, 0);
         }
+        
         perkMenu.gameObject.SetActive(true);
     }
 

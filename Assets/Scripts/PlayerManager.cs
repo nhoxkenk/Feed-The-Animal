@@ -18,7 +18,8 @@ public class PlayerManager : MonoBehaviour
 
     private float horizontalInput;
     private float verticalInput;
-    private float timerDelay = 1.5f;
+    //private float timerDelay = 1.5f;
+    private Dictionary<ProjectileType, float> timerDelay = new Dictionary<ProjectileType, float>();
     private Dictionary<ProjectileType, float> timers = new Dictionary<ProjectileType, float>();
 
 
@@ -87,6 +88,8 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
+        timerDelay[ProjectileType.Peashooter] = 1.5f;
+        timerDelay[ProjectileType.Dynamite] = 4.5f;
         currentHealth = maxHealth;
         healthBar.setMaxHealth(currentHealth);
         timers[ProjectileType.Peashooter] = 0f;
@@ -170,7 +173,7 @@ public class PlayerManager : MonoBehaviour
             switch (type)
             {
                 case ProjectileType.Peashooter:
-                    if (timers[type] >= timerDelay && this.target != null)
+                    if (timers[type] >= timerDelay[type] && this.target != null)
                     {
                         FireProjectile(this.target.transform);
                         timers[type] = 0f; // Đặt lại timer sau khi bắn đạn
@@ -178,7 +181,7 @@ public class PlayerManager : MonoBehaviour
                     break;
 
                 case ProjectileType.Dynamite:
-                    if (timers[type] >= timerDelay * 3)
+                    if (timers[type] >= timerDelay[type] * 3)
                     {
                         setDynamite();
                         timers[type] = 0; // Đặt lại timer sau khi thiết lập Dynamite
@@ -192,7 +195,21 @@ public class PlayerManager : MonoBehaviour
     public void ModifyFireRate(float time)
     {
         Debug.Log("Fire Rate");
-        timerDelay = time;
+        if (timerDelay[ProjectileType.Peashooter] > 0.6f)
+        {
+            timerDelay[ProjectileType.Peashooter] *= time;
+        }
+        
+    }
+
+    public void ModifyCooldown(float time)
+    {
+        Debug.Log("Cool Down");
+        if (timerDelay[ProjectileType.Dynamite] > 2f)
+        {
+            timerDelay[ProjectileType.Dynamite] *= time;
+        }
+
     }
 
     public void EnableDynamite()
